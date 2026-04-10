@@ -1,13 +1,13 @@
 from asyncio import sleep, iscoroutine, get_running_loop, run
 from importlib.util import module_from_spec, spec_from_file_location
-from os import makedirs
-from os import system, listdir, name
+from os import listdir, makedirs
 from pathlib import Path
 from typing import Callable
 from pystyle import Colorate, Colors
 from qrcode import QRCode
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
+from os import system, name
 
 API_HASH = 'bf654fd64259c65b85c8899ff081a437'
 API_ID = 21341528
@@ -27,9 +27,9 @@ BANNER = """
 0. Выйти                  
 """
 
-clear = lambda: system('cls' if name == 'nt' else 'clear')
 colored = lambda prompt: Colorate.Vertical(Colors.blue_to_cyan, prompt)
 print_colored = lambda text: print(colored(text) + " ")
+clear = lambda: system('cls' if name == 'nt' else 'clear')
 
 async def create_client(session_name: str):
     makedirs("sessions", exist_ok=True)
@@ -51,9 +51,7 @@ async def async_input(prompt: str = "") -> str:
 
 async def call_maybe_async(func: Callable, *args):
     result = func(*args)
-    if iscoroutine(result):
-        await result
-
+    if iscoroutine(result): await result
 
 async def userbot():
     while True:
@@ -168,8 +166,10 @@ async def load_modules(client: TelegramClient, path: Path):
                 continue
             await call_maybe_async(module.a, client)
             active += 1
-        except Exception:
-            print(f"Ошибка загрузки модуля {file.name}")
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print(f"Ошибка загрузки модуля {file.name}: {e}")
 
     print_colored(f"Загружено модулей: {active}/{len(modules)}")
     print_colored("Бот работает. Ctrl+C для остановки.")

@@ -37,6 +37,7 @@ def a(client):
 ▪ <code>.zaeb [off]</code> - заебать типа
 ▪ <code>.onl on|off</code> - вечный онлайн
 ▪ <code>.report [количество] [комментарий]</code> - массовые жалобы
+▪ <code>.gifts (help|mon|parse|send|log)</code> - работа с маркетом телеграм, в help можно узнать все подкоманды 
 
         """
         await event.edit(help_message, parse_mode='html')

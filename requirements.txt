@@ -1,6 +1,0 @@
-asyncio
-Telethon
-httpx
-phonenumbers
-pystyle
-qrcode
