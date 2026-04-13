@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import sleep
 from collections import deque
 
 from telethon import events
@@ -21,16 +21,16 @@ async def putback_event_handler(event):
     result_text = ""
 
     await event.edit(TYPING_SYMBOL_2)
-    await asyncio.sleep(DELAY_BETWEEN_EDITS)
+    await sleep(DELAY_BETWEEN_EDITS)
 
     for character in reversed(input_str):
         result_text = character + result_text
         typing_text = TYPING_SYMBOL_2 + result_text
         await event.edit(f'<b>{typing_text}</b>', parse_mode='html')
-        await asyncio.sleep(DELAY_BETWEEN_EDITS)
+        await sleep(DELAY_BETWEEN_EDITS)
 
 
-def a(client):
+def init(client):
     client.on(events.NewMessage(pattern=r"\.tpback (.*)", outgoing=True))(putback_event_handler)
 
     @client.on(events.NewMessage(pattern=r"\.tp (.*)", outgoing=True))
@@ -40,12 +40,12 @@ def a(client):
         input_str = event.pattern_match.group(1)
         previous_text = ""
         await event.edit(typing_symbol)
-        await asyncio.sleep(DELAY_BETWEEN_EDITS)
+        await sleep(DELAY_BETWEEN_EDITS)
         for character in input_str:
             previous_text = previous_text + "" + character
             typing_text = previous_text + "" + typing_symbol
             await event.edit(f'<b>{typing_text}</b>', parse_mode='html')
-            await asyncio.sleep(DELAY_BETWEEN_EDITS)
+            await sleep(DELAY_BETWEEN_EDITS)
 
     @client.on(events.NewMessage(pattern=r"\.type (.*)", outgoing=True))
     async def _(event):
@@ -56,15 +56,15 @@ def a(client):
         previous_text = ""
 
         await event.edit(TYPING_SYMBOL)
-        await asyncio.sleep(DELAY_BETWEEN_EDITS)
+        await sleep(DELAY_BETWEEN_EDITS)
 
         for character in input_str:
             previous_text += character
             typing_text = previous_text + TYPING_SYMBOL
             await event.edit(typing_text)
-            await asyncio.sleep(DELAY_BETWEEN_EDITS)
+            await sleep(DELAY_BETWEEN_EDITS)
             await event.edit(previous_text)
-            await asyncio.sleep(DELAY_BETWEEN_EDITS)
+            await sleep(DELAY_BETWEEN_EDITS)
 
     @client.on(events.NewMessage(pattern=r"\.line", outgoing=True))
     async def _(event):
@@ -90,7 +90,7 @@ def a(client):
 
         for _ in range(len(chars)):
             result += chars.popleft()
-            await asyncio.sleep(animation_delay)
+            await sleep(animation_delay)
             try:
                 await event.edit(result)
             except MessageNotModifiedError:

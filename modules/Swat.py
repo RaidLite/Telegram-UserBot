@@ -49,7 +49,7 @@ replacements = {"А": "@", "В": "B", "Е": "3", "Ж": "}|{", "И": "U", "К": "
                 "м": "m", "н": "H", "о": "o", "р": "p", "с": "$", "т": "T", "у": "y", "х": "x", }
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(pattern=r"^\.swat", outgoing=True))
     async def _(event):
         reply = await event.get_reply_message()

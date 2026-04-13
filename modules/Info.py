@@ -2,7 +2,7 @@ from telethon import events
 from telethon.tl.functions.users import GetFullUserRequest
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(outgoing=True, pattern=r"\.getid"))
     async def id_commands(event):
         if event.is_group:

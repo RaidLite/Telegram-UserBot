@@ -3,7 +3,7 @@ from time import perf_counter
 from telethon import events
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(outgoing=True, pattern=r"^\.ping$"))
     async def ping_command_handler(event):
         start = perf_counter()

@@ -3,11 +3,10 @@ from collections import deque
 from datetime import datetime
 from json import dumps
 from json import loads
-from os import path
+from os import path, remove
 from pathlib import Path
 from re import findall
 from time import time
-
 from httpx import AsyncClient
 from pystyle import Colors, Colorate
 from telethon import events
@@ -85,29 +84,14 @@ async def get_all_gifts_not_hidden(client): return await client(GetStarGiftsRequ
 async def payment_request(invoice, client): return await client(GetPaymentFormRequest(invoice=invoice, theme_params=None))
 def save(p, data): Path(p).write_text(dumps(data, ensure_ascii=False, indent=4), encoding="utf-8")
 async def get_invoice(peer, gg_id): return InputInvoiceStarGift(hide_name=False, include_upgrade=False, peer=peer, gift_id=gg_id, message=TextWithEntities(text="", entities=[]))
-
-
 def _log(tag: str, msg: str) -> None: activity_log.appendleft({"ts": time(), "tag": tag, "msg": msg})
 
 async def get_price(client, gift_id):
     try:
-        resale = await client(
-            GetResaleStarGiftsRequest(
-                gift_id=gift_id,
-                offset="",
-                limit=1,
-                sort_by_price=True,
-                sort_by_num=True
-            )
-        )
+        resale = await client(GetResaleStarGiftsRequest(gift_id=gift_id, offset="", limit=1, sort_by_price=True, sort_by_num=True))
         if resale.gifts:
             item = resale.gifts[0]
-            p = next(
-                (e.amount for e in getattr(
-                    item, "resell_amount", []
-                ) if isinstance(
-                    e, StarsAmount
-                )), None)
+            p = next((e.amount for e in getattr(item, "resell_amount", []) if isinstance(e, StarsAmount)), None)
 
             return {
                 "price": p,
@@ -115,11 +99,8 @@ async def get_price(client, gift_id):
                 "id": gift_id
             }
 
-    except Exception as e:
-        p_g(f"[!] Ошибка запроса ID {gift_id}: {e}")
-
+    except Exception as e: p_g(f"[!] Ошибка запроса ID {gift_id}: {e}")
     return None
-
 
 def load_data(file_path: str) -> set:
     if path.exists(file_path):
@@ -291,7 +272,7 @@ async def _monitor_loop(client: object, peer: object) -> None:
     _log("MONITOR", "Остановлен")
 
 
-def a(client):
+def init(client):
     async def send(event, text: str) -> None:
         try: await event.edit(text, parse_mode="md")
         except Exception: await client.send_message(event.chat_id, text, parse_mode="md")
@@ -356,8 +337,6 @@ def a(client):
 
     @client.on(events.NewMessage(outgoing=True, pattern=r"^\.gifts parse (all|info)$"))
     async def cmd_parse(event):
-        import os
-
         sub = event.raw_text.split()[2]
         if parser_state["running"]:
             await send(event, "⚠️ Парсер уже работает")
@@ -371,24 +350,17 @@ def a(client):
             if sub == "all":
                 parser_state["step"] = "runly"
                 api_bytes, all_bytes = await _do_runly(client)
-
                 path1 = "api_gifts.json"
                 path2 = "all_gifts.json"
-
-                with open(path1, "wb") as f:
-                    f.write(api_bytes)
-
-                with open(path2, "wb") as f:
-                    f.write(all_bytes)
+                with open(path1, "wb") as file: file.write(api_bytes)
+                with open(path2, "wb") as file: file.write(all_bytes)
 
                 try:
                     await client.send_file(event.chat_id, path1, caption="📄 `api_gifts.json`")
                     await client.send_file(event.chat_id, path2, caption="📄 `all_gifts.json`")
                 finally:
-                    if os.path.exists(path1):
-                        os.remove(path1)
-                    if os.path.exists(path2):
-                        os.remove(path2)
+                    if path.exists(path1): remove(path1)
+                    if path.exists(path2): remove(path2)
 
             if sub in ("all", "info"):
                 parser_state["step"] = "info"
@@ -407,8 +379,8 @@ def a(client):
                         caption=f"📄 `available_gifts.json` — {len(available_ids)} доступных",
                     )
                 finally:
-                    if os.path.exists(path3):
-                        os.remove(path3)
+                    if path.exists(path3):
+                        remove(path3)
 
             s = parser_state
             await send(event, (

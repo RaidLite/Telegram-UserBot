@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import gather
 
 from telethon import events
 
@@ -11,7 +11,7 @@ ERROR_MESSAGE = (
 )
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(pattern=r"\.spam", outgoing=True))
     async def spam_handler(event):
         command_text = event.message.message if hasattr(event.message,
@@ -32,6 +32,6 @@ def a(client):
                 await client.send_message(event.chat_id, message_text)
         elif reply and reply.media:
             await event.delete()
-            await asyncio.gather(*(client.send_file(event.chat_id, reply.media) for _ in range(count)))
+            await gather(*(client.send_file(event.chat_id, reply.media) for _ in range(count)))
         else:
             await event.edit(ERROR_MESSAGE, parse_mode='html')

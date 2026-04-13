@@ -1,5 +1,5 @@
-import asyncio
-import random
+from asyncio import sleep
+from random import choices, choice
 
 from telethon import events
 
@@ -327,7 +327,7 @@ def remove_punctuation(text):
     return text.translate(str.maketrans('.,', '  '))
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(pattern=r"\.tralka", outgoing=True))
     async def tralka_handler(event):
         message_text = event.raw_text.strip()
@@ -340,7 +340,7 @@ def a(client):
 
         try:
             clean_msgs = [msg.strip().capitalize() for msg in msgs if msg.strip()]
-            selected_messages = random.choices(clean_msgs, k=counter)
+            selected_messages = choices(clean_msgs, k=counter)
             raw_result = ' '.join(selected_messages).strip().lower()
             final_result = raw_result[0].upper() + raw_result[1:] if raw_result else ''
             await event.edit(final_result)
@@ -361,9 +361,9 @@ def a(client):
 
         for _ in range(count):
             try:
-                word = random.choice(msgs)
+                word = choice(msgs)
                 await client.send_message(event.chat_id, word.strip())
-                await asyncio.sleep(0.01)
+                await sleep(0.01)
             except Exception as e:
                 await event.reply(f"Произошла ошибка: {str(e)}")
                 break
@@ -384,7 +384,7 @@ def a(client):
 
         try:
             for _ in range(total_lines):
-                line = random.choice(msgs)
+                line = choice(msgs)
                 line = remove_punctuation(line)
                 word_list = line.split()
 
@@ -392,7 +392,7 @@ def a(client):
                     chunk = word_list[i:i + words_per_message]
                     message = ' '.join(chunk)
                     await client.send_message(event.chat_id, message)
-                    await asyncio.sleep(0.1)
+                    await sleep(0.1)
 
         except Exception as e:
             await event.reply(f"Произошла ошибка: {str(e)}")

@@ -14,7 +14,7 @@ reasons = [
 ]
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(pattern=r"\.report", outgoing=True))
     async def _(event):
         reported_actions = set()

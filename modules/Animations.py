@@ -1,4 +1,4 @@
-import random
+from random import choices
 from asyncio import sleep
 
 from telethon import events
@@ -16,7 +16,7 @@ mask = [
 ]
 
 
-def a(client):
+def init(client):
     async def create_heart_pattern(arr, h):
         a = arr[0]
         char_map = {0: h, 1: a}
@@ -35,7 +35,7 @@ def a(client):
 
     async def random_pattern(message, arr, h, sleep_time=0.3):
         for _ in range(8):
-            rand = random.choices(arr, k=34)
+            rand = choices(arr, k=34)
             rand_iter = iter(rand)
 
             lines = []
@@ -72,7 +72,7 @@ def a(client):
             await sleep(0.5)
 
     @client.on(events.NewMessage(pattern=r"\.love", outgoing=True))
-    async def watcher_lvR(event):
+    async def watcher_love(event):
         message = event
         if message.sender_id == (await message.client.get_me()).id:
             arr = ["🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "🟫", "⬛️"]

@@ -3,7 +3,7 @@ from telethon import events
 CHUNK_SIZE = 50
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(outgoing=True, pattern=".tagall"))
     async def _(event):
         if event.fwd_from or not event.is_group:

@@ -1,4 +1,4 @@
-import random
+from random import randint, choice
 
 from telethon import events
 
@@ -61,68 +61,68 @@ models = ["Vesta", "Rio", "Solaris", "Camry", "Polo", "Logan", "Qashqai", "Focus
           "500", "Tiggo", "G3", "Tucson", "B-Class", "Model 3", "458 Italia", "911"]
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(pattern=r"\.gen(?:\s+(.+))?$", outgoing=True))
     async def handler(event):
         args = event.pattern_match.group(1)
 
         if args:
             parts = args.split()
-            gender = parts[0] if parts[0] in ['male', 'female'] else random.choice(['male', 'female'])
-            country = parts[1] if len(parts) > 1 and parts[1] in ['ru', 'ua'] else random.choice(['ru', 'ua'])
+            gender = parts[0] if parts[0] in ['male', 'female'] else choice(['male', 'female'])
+            country = parts[1] if len(parts) > 1 and parts[1] in ['ru', 'ua'] else choice(['ru', 'ua'])
         else:
-            gender = random.choice(['male', 'female'])
-            country = random.choice(['ru', 'ua'])
+            gender = choice(['male', 'female'])
+            country = choice(['ru', 'ua'])
 
         await event.respond(await generate_identity(gender, country))
         await event.delete()
 
 
 async def generate_all():
-    return await generate_identity(random.choice(['male', 'female']), random.choice(['ru', 'ua']))
+    return await generate_identity(choice(['male', 'female']), choice(['ru', 'ua']))
 
 
 def random_choice(country, gender, key):
-    return random.choice(DATA[country][key if key in DATA[country] else f"{gender}" if key == 'names' else key])
+    return choice(DATA[country][key if key in DATA[country] else f"{gender}" if key == 'names' else key])
 
 
 def random_digits(length):
-    return ''.join(str(random.randint(0, 9)) for _ in range(length))
+    return ''.join(str(randint(0, 9)) for _ in range(length))
 
 
 def random_ip():
-    return '.'.join(str(random.randint(0, 255)) for _ in range(4))
+    return '.'.join(str(randint(0, 255)) for _ in range(4))
 
 
 def random_mac():
-    return ':'.join(f"{random.randint(0, 255):02x}" for _ in range(6))
+    return ':'.join(f"{randint(0, 255):02x}" for _ in range(6))
 
 
 def random_date(start=2010, end=2023):
-    return f"{random.randint(1, 31):02d}.{random.randint(1, 12):02d}.{random.randint(start, end)}"
+    return f"{randint(1, 31):02d}.{randint(1, 12):02d}.{randint(start, end)}"
 
 
 async def generate_identity(gender='male', country='ru'):
     first = random_choice(country, gender, gender)
     last = random_choice(country, gender, 'surnames')
     name = f"{first} {last}"
-    age = random.randint(18, 65)
+    age = randint(18, 65)
     location = f"{random_choice(country, gender, 'cities')}, {country.upper()}"
     phone = f"+7{random_digits(10)}" if country == 'ru' else f"+380{random_digits(9)}"
-    email = f"{name.lower().replace(' ', '.')}{random.randint(100, 999)}@{random.choice(domains)}"
-    passport = f"Серия {random.randint(10, 99)} {random.randint(10, 99)} Номер {random_digits(6)} | Выдан {random_date()}" if country == 'ru' else f"ID{random_digits(8)}"
-    address = f"{random_choice(country, gender, 'streets')} ул., д. {random.randint(1, 200)}, кв. {random.randint(1, 200)}"
-    card_type = random.choice(DATA[country]['card_types'])
+    email = f"{name.lower().replace(' ', '.')}{randint(100, 999)}@{choice(domains)}"
+    passport = f"Серия {randint(10, 99)} {randint(10, 99)} Номер {random_digits(6)} | Выдан {random_date()}" if country == 'ru' else f"ID{random_digits(8)}"
+    address = f"{random_choice(country, gender, 'streets')} ул., д. {randint(1, 200)}, кв. {randint(1, 200)}"
+    card_type = choice(DATA[country]['card_types'])
     prefix = '4' if card_type == 'Visa' else '5' if card_type == 'MasterCard' else '2'
     card_number = f"{prefix}{random_digits(15)}"
-    card = f"{card_type} {card_number[:4]} {card_number[4:8]} {card_number[8:12]} {card_number[12:16]} | CVV: {random_digits(3)} | Exp: {random.randint(1, 12):02d}/{random.randint(24, 30)}"
-    car = f"{random.choice(brands)} {random.choice(models)} ({random.randint(2005, 2023)}) | Номер: {random.randint(100, 999)}{random.choice('ABEKMHOPCTYX')}{random.choice('ABEKMHOPCTYX')}{random.randint(77, 199)}"
+    card = f"{card_type} {card_number[:4]} {card_number[4:8]} {card_number[8:12]} {card_number[12:16]} | CVV: {random_digits(3)} | Exp: {randint(1, 12):02d}/{randint(24, 30)}"
+    car = f"{choice(brands)} {choice(models)} ({randint(2005, 2023)}) | Номер: {randint(100, 999)}{choice('ABEKMHOPCTYX')}{choice('ABEKMHOPCTYX')}{randint(77, 199)}"
     ip = random_ip()
     mac = random_mac()
     bic = random_digits(9)
     inn = random_digits(12)
     snils = f"{random_digits(3)}-{random_digits(3)}-{random_digits(3)} {random_digits(2)}"
-    driver = f"{random.randint(10, 99)} {random_digits(6)}"
+    driver = f"{randint(10, 99)} {random_digits(6)}"
     return f"""👤 ФИО: {name}
 ⌛ Возраст: {age}
 🌍 Локация: {location}

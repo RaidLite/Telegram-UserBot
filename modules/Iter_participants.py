@@ -1,9 +1,9 @@
 import csv
-import io
-import time
+from io import BytesIO, StringIO
+from time import sleep, time
 
-import phonenumbers
 from phonenumbers import geocoder
+from phonenumbers import parse
 from telethon import events
 from telethon.errors import RPCError
 from telethon.tl.functions.users import GetFullUserRequest
@@ -25,7 +25,7 @@ def get_country_from_phone(phone):
         return '-'
     try:
         phone_norm = phone if phone.startswith('+') else f'+{phone}'
-        number = phonenumbers.parse(phone_norm)
+        number = parse(phone_norm)
         country = geocoder.country_name_for_number(number, 'ru')
         location = geocoder.description_for_number(number, 'ru')
         return f"{country} ({location})" if location else country
@@ -33,7 +33,7 @@ def get_country_from_phone(phone):
         return '-'
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(pattern=ITER_COMMAND_PATTERN, outgoing=True))
     async def handle_iter_command(event):
         args = event.text.split()
@@ -43,7 +43,7 @@ def a(client):
         fetch_full = "-f" in args
         include_only_with_phone = "-n" in args
 
-        timestamp = int(time.time())
+        timestamp = int(time())
         filename = f'export_{chat.id}_{timestamp}.csv'
 
         admins = []
@@ -52,7 +52,7 @@ def a(client):
         except:
             pass
 
-        sio = io.StringIO()
+        sio = StringIO()
         writer = csv.writer(sio, delimiter='|')
         writer.writerow(header)
 
@@ -66,7 +66,7 @@ def a(client):
                     try:
                         full_user = await client(GetFullUserRequest(user.id))
                         about = full_user.full_user.about or '-'
-                        time.sleep(0.1)
+                        sleep(0.1)
                     except:
                         pass
 
@@ -108,7 +108,7 @@ def a(client):
         try:
             await client.send_file(
                 'me',
-                io.BytesIO(csv_data.encode('utf-8')),
+                BytesIO(csv_data.encode('utf-8')),
                 attributes=[DocumentAttributeFilename(filename)]
             )
         except RPCError:

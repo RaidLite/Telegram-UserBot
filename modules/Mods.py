@@ -17,7 +17,7 @@ MAP = {
 }
 
 
-def a(client):
+def init(client):
     global bold_mode
 
     @client.on(events.NewMessage(outgoing=True, pattern='.afk'))

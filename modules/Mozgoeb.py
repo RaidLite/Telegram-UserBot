@@ -4,7 +4,7 @@ from telethon import events
 stop_flags = {}
 
 
-def a(client):
+def init(client):
     @client.on(events.NewMessage(pattern=r"\.zaeb", outgoing=True))
     async def _(event):
         chat_id = event.chat_id

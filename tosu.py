@@ -1,13 +1,13 @@
 from asyncio import sleep, iscoroutine, get_running_loop, run
 from importlib.util import module_from_spec, spec_from_file_location
-from os import listdir, makedirs
+from os import listdir, makedirs, system, name
 from pathlib import Path
 from typing import Callable
 from pystyle import Colorate, Colors
 from qrcode import QRCode
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
-from os import system, name
+from traceback import print_exc
 
 API_HASH = 'bf654fd64259c65b85c8899ff081a437'
 API_ID = 21341528
@@ -34,11 +34,7 @@ clear = lambda: system('cls' if name == 'nt' else 'clear')
 async def create_client(session_name: str):
     makedirs("sessions", exist_ok=True)
     session_file = Path("sessions") / session_name
-    client = TelegramClient(
-        str(session_file),
-        API_ID,
-        API_HASH
-    )
+    client = TelegramClient(str(session_file), API_ID, API_HASH)
     await client.connect()
     return client
 
@@ -76,8 +72,7 @@ async def use_registered_account():
 
     try:
         idx = int(await async_input("Выбери аккаунт: ")) - 1
-        if not (0 <= idx < len(sessions)):
-            raise ValueError
+        if not (0 <= idx < len(sessions)): raise ValueError
     except ValueError:
         print_colored("Некорректный номер аккаунта")
         return
@@ -112,7 +107,7 @@ async def register_account():
 
             if choice == "1":
                 qr = await client.qr_login()
-                print_colored("\nОтсканируйте этот QR-код:")
+                print_colored("\nОтсканируйте этот QR-код в приложении:")
                 qr_gen = QRCode()
                 qr_gen.add_data(qr.url)
                 qr_gen.make(fit=True)
@@ -161,14 +156,13 @@ async def load_modules(client: TelegramClient, path: Path):
             if spec is None or spec.loader is None: raise ImportError("Не удалось создать spec")
             module = module_from_spec(spec)
             spec.loader.exec_module(module)
-            if not hasattr(module, "a"):
+            if not hasattr(module, "init"):
                 print_colored(f"{file.name}: нет функции a(client)")
                 continue
-            await call_maybe_async(module.a, client)
+            await call_maybe_async(module.init, client)
             active += 1
         except Exception as e:
-            import traceback
-            traceback.print_exc()
+            print_exc()
             print(f"Ошибка загрузки модуля {file.name}: {e}")
 
     print_colored(f"Загружено модулей: {active}/{len(modules)}")

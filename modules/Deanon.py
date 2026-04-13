@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import sleep
 
 from telethon import events
 
@@ -24,16 +24,11 @@ DEANON_RESULT = (
     'Жду извинений 😈😈😈'
 )
 
-
-def a(client):
+def init(client):
     @client.on(events.NewMessage(pattern=r"\.deanon", outgoing=True))
-    async def deanon(event):
-        i = 1
-        await event.edit(SEARCHING.format(i))
-
-        while i < 50:
-            i += 1
-            await asyncio.sleep(0.2)
+    async def _(event):
+        for i in range(1, 51):
             await event.edit(SEARCHING.format(i))
+            await sleep(0.2)
 
         await event.edit(DEANON_RESULT)
