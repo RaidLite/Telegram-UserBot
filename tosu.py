@@ -157,7 +157,7 @@ async def load_modules(client: TelegramClient, path: Path):
             module = module_from_spec(spec)
             spec.loader.exec_module(module)
             if not hasattr(module, "init"):
-                print_colored(f"{file.name}: нет функции a(client)")
+                print_colored(f"{file.name}: нет функции init(client)")
                 continue
             await call_maybe_async(module.init, client)
             active += 1
