@@ -57,9 +57,7 @@ def init(client):
                 add("📌 Истории недоступны", "Да" if user.stories_unavailable else None)
                 add("💼 Бизнес бот", getattr(user, "bot_business", None), True)
                 add("🕒 Статус", type(user.status).__name__.replace('UserStatus', '') if user.status else None)
-                if hasattr(user.status, "was_online") and user.status:
-                    add("⏱ Был в сети", user.status.was_online.strftime("%d.%m.%Y %H:%M"))
-
+                if hasattr(user.status, "was_online") and user.status: add("⏱ Был в сети", user.status.was_online.strftime("%d.%m.%Y %H:%M"))
                 output += "\n📄 <b>Дополнительно</b>\n\n"
                 add("ℹ️ О себе", full_user.about)
                 add("👥 Общих чатов", full_user.common_chats_count)

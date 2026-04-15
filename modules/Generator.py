@@ -77,30 +77,12 @@ def init(client):
         await event.respond(await generate_identity(gender, country))
         await event.delete()
 
-
-async def generate_all():
-    return await generate_identity(choice(['male', 'female']), choice(['ru', 'ua']))
-
-
-def random_choice(country, gender, key):
-    return choice(DATA[country][key if key in DATA[country] else f"{gender}" if key == 'names' else key])
-
-
-def random_digits(length):
-    return ''.join(str(randint(0, 9)) for _ in range(length))
-
-
-def random_ip():
-    return '.'.join(str(randint(0, 255)) for _ in range(4))
-
-
-def random_mac():
-    return ':'.join(f"{randint(0, 255):02x}" for _ in range(6))
-
-
-def random_date(start=2010, end=2023):
-    return f"{randint(1, 31):02d}.{randint(1, 12):02d}.{randint(start, end)}"
-
+async def generate_all(): return await generate_identity(choice(['male', 'female']), choice(['ru', 'ua']))
+random_choice = lambda country, gender, key: choice(DATA[country][key if key in DATA[country] else f"{gender}" if key == 'names' else key])
+random_digits = lambda length: ''.join(str(randint(0, 9)) for _ in range(length))
+random_ip = lambda: '.'.join(str(randint(0, 255)) for _ in range(4))
+random_mac = lambda: ':'.join(f"{randint(0, 255):02x}" for _ in range(6))
+random_date = lambda start=2010, end=2023: f"{randint(1, 31):02d}.{randint(1, 12):02d}.{randint(start, end)}"
 
 async def generate_identity(gender='male', country='ru'):
     first = random_choice(country, gender, gender)

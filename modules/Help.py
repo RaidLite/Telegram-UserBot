@@ -44,7 +44,7 @@ help_message = """
 
 📦 <b>Прочее</b>
 ┣ <code>.report [кол-во] [комм.]</code> — массовые жалобы
-┗ <code>.gifts help|mon|parse|send|log</code> — маркет Telegram
+┗ <code>.gifts help|parse|send</code> — маркет Telegram
 """
 
 def init(client):

@@ -172,5 +172,4 @@ async def load_modules(client: TelegramClient, path: Path):
         while True: await sleep(1)
     finally: print_colored("Остановка модулей...")
 
-if __name__ == "__main__":
-    run(userbot())
+if __name__ == "__main__": run(userbot())
