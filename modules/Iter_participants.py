@@ -1,5 +1,4 @@
 import csv
-import asyncio
 from io import BytesIO, StringIO
 from time import time
 

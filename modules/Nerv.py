@@ -1,7 +1,6 @@
 from asyncio import sleep, create_task, CancelledError
-from random import choice
 
-from telethon import functions, types, events
+from telethon import functions, events
 
 nerv_tasks = {}
 
@@ -18,7 +17,7 @@ def init(client):
         if status == "on":
             if target_chat not in nerv_tasks:
                 nerv_tasks[target_chat] = create_task(
-                    nerv_logic(client, target_chat)
+                    nerv_logic(client)
                 )
 
         elif status == "off":
@@ -29,40 +28,10 @@ def init(client):
 
 async def nerv_online_status(client):
     await client(functions.account.UpdateStatusRequest(offline=False))
-    await sleep(0.1)
     await client(functions.account.UpdateStatusRequest(offline=True))
-    await sleep(0.1)
 
-
-async def nerv_task(client, chat_id, act):
-    await nerv_online_status(client)
-    await nerv_online_status(client)
-    await nerv_online_status(client)
-    await client(functions.messages.SetTypingRequest(
-        peer=chat_id,
-        action=act
-    ))
-    await sleep(1.5)
-    await client(functions.messages.SetTypingRequest(
-        peer=chat_id,
-        action=types.SendMessageCancelAction()
-    ))
-
-
-async def nerv_logic(client, chat_id):
-    actions = [
-        types.SendMessageTypingAction(),
-        types.SendMessageRecordAudioAction(),
-        types.SendMessageRecordVideoAction(),
-        types.SendMessageChooseStickerAction(),
-        types.SendMessageUploadPhotoAction(progress=1)
-    ]
-
+async def nerv_logic(client):
     try:
-        while True:
-            act = choice(actions)
-            await nerv_task(client, chat_id, act)
-    except CancelledError:
-        raise
-    except Exception:
-        return
+        while True: await nerv_online_status(client)
+    except CancelledError: raise
+    except Exception:return

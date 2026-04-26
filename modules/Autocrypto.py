@@ -2,10 +2,6 @@ from asyncio import create_task
 from re import compile, I
 from telethon import events, functions, types
 
-CHATS_BLACKLIST = {
-    1622808649, 1559501630,
-    1985737506, 5014831088
-}
 CODE_REGEX = compile(r"(CryptoBot|send|tonRocketBot|wallet|xrocket)\?start=([A-Za-z0-9_-]+)", I)
 activated = set()
 
@@ -20,10 +16,8 @@ async def fast_activate(client, bot, code):
     except Exception: pass
 
 def init(client):
-    opts = dict(incoming=True, blacklist_chats=True, chats=CHATS_BLACKLIST)
-
-    @client.on(events.NewMessage(**opts))
-    @client.on(events.MessageEdited(**opts))
+    @client.on(events.NewMessage(incoming=True))
+    @client.on(events.MessageEdited(incoming=True))
     async def handler(event):
         def try_match(text: str | None) -> bool:
             if not text:

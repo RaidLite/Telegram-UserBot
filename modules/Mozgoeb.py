@@ -3,7 +3,6 @@ from telethon import events
 
 stop_flags = {}
 
-
 def init(client):
     @client.on(events.NewMessage(pattern=r"\.zaeb", outgoing=True))
     async def _(event):
@@ -37,9 +36,9 @@ def init(client):
 
             try:
                 msg = await event.client.send_message(event.to_id, txt, parse_mode='html')
-                await sleep(0.3)
+                await sleep(0.1)
                 await msg.delete()
-                await sleep(0.3)
+                await sleep(0.1)
             except:
                 break
 

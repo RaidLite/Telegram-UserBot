@@ -2,7 +2,6 @@ from telethon import events
 
 IMG_URL = "https://i.ibb.co/rKDqVdfp/image.png"
 
-
 def init(client):
     @client.on(events.NewMessage(pattern=r"\.cb(?:\s+(\d+))?", outgoing=True))
     async def _(event):

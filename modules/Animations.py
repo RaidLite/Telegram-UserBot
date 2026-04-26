@@ -75,16 +75,30 @@ def init(client):
     async def watcher_love(event):
         message = event
         if message.sender_id == (await message.client.get_me()).id:
-            arr = ["🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "🟫", "⬛️"]
-            h = "⬜️"
+            colors = ["🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "🟫", "⬛️"]
+            white = "⬜️"
             first = ""
             for i in "".join(
-                    [h * 9, "\n", h * 2, arr[0] * 2, h, arr[0] * 2, h * 2, "\n", h, arr[0] * 7, h, "\n", h, arr[0] * 7,
-                     h, "\n", h, arr[0] * 7, h, "\n", h * 2, arr[0] * 5, h * 2, "\n", h * 3, arr[0] * 3, h * 3, "\n",
-                     h * 4, arr[0], h * 4]).split("\n"):
+                    [
+                     white * 9, "\n", white * 2,
+                        colors[0] * 2, white,
+                        colors[0] * 2, white * 2, "\n", white,
+                        colors[0] * 7, white, "\n", white,
+                        colors[0] * 7,
+                     white, "\n",
+                        white, colors[0] * 7,
+                        white, "\n",
+                        white * 2, colors[0] * 5,
+                        white * 2, "\n",
+                        white * 3, colors[0] * 3,
+                        white * 3, "\n",
+                     white * 4, colors[0],
+                        white * 4
+                    ]
+            ).split("\n"):
                 first += i + "\n"
                 await message.edit(first)
                 await sleep(0.2)
-            await edit_pattern(message, arr, h)
-            await random_pattern(message, arr, h)
-            await final_pattern(message, arr, h, "❤️")
+            await edit_pattern(message, colors, white)
+            await random_pattern(message, colors, white)
+            await final_pattern(message, colors, white, "❤️")
