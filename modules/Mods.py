@@ -2,12 +2,12 @@ from telethon import events
 from telethon.tl.functions.account import UpdateProfileRequest, UpdateStatusRequest
 
 bold_mode = False
-BOLD_ON_CMD = ".bold on"
-BOLD_OFF_CMD = ".bold off"
+BOLD_ON_CMD = ".mods bold on"
+BOLD_OFF_CMD = ".mods bold off"
 BOLD_TAG = "\u200B"
 shift_mode = False
-SHIFT_ON_CMD = ".shrift on"
-SHIFT_OFF_CMD = ".shrift off"
+SHIFT_ON_CMD = ".mods shrift on"
+SHIFT_OFF_CMD = ".mods shrift off"
 MAP = {
     "а": "ᴀ", "б": "ʙ", "в": "ᴠ", "г": "ɢ", "д": "ᴅ", "е": "ᴇ", "ё": "ё", "ж": "ᴢʜ",
     "з": "ᴢ", "и": "ɪ", "й": "ᴊ", "к": "ᴋ", "л": "ʟ", "м": "ᴍ", "н": "ɴ", "о": "ᴏ",
@@ -16,11 +16,25 @@ MAP = {
     "ю": "ʏᴜ", "я": "ʏᴀ"
 }
 
+MODS_MENU = (
+    "💠 Mods - Меню\n\n"
+    "┣ <code>.mods bold on/off</code> - Включить/выключить жирный текст\n"
+    "┣ <code>.mods shrift on/off</code> - Включить/выключить шрифт\n"
+    "┣ <code>.mods afk</code> - Включить/выключить AFK\n"
+    "┗ <code>.mods help</code> - Показать это меню\n"
+)
 
 def init(client):
     global bold_mode
 
-    @client.on(events.NewMessage(outgoing=True, pattern='.afk'))
+    @client.on(events.NewMessage(outgoing=True, pattern='.mods help'))
+    async def show_menu(event):
+        if event.fwd_from:
+            return
+        await event.delete()
+        await event.respond(MODS_MENU, parse_mode='html')
+
+    @client.on(events.NewMessage(outgoing=True, pattern='.mods afk'))
     async def afk(event):
         if event.fwd_from:
             return
